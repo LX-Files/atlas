@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<meta charset="utf-8" />
+  		<title>Historic Topographic Maps</title>
+  		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+  		<!-- Load Leaflet from CDN -->
+  		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    		crossorigin=""/>
+  		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
+			crossorigin="">
+		</script>
+
+  		<!-- Load Esri Leaflet from CDN -->
+  		<script src="https://unpkg.com/esri-leaflet@3.0.7/dist/esri-leaflet.js"
+    		integrity="sha512-ciMHuVIB6ijbjTyEdmy1lfLtBwt0tEHZGhKVXDzW7v7hXOe+Fo3UA1zfydjCLZ0/vLacHkwSARXB5DmtNaoL/g=="
+    		crossorigin="">
+		</script>
+		
+		<!-- opacity control -->
+		<script src="plugin/Leaflet.Control.Opacity/dist/L.Control.Opacity.js"></script>
+        <link href="plugin/Leaflet.Control.Opacity/dist/L.Control.Opacity.css" rel="stylesheet" />
+
+  		<style>
+    		body { margin:0; padding:0; }
+    		#map { position: absolute; top:0; bottom:0; right:0; left:0; }
+  		</style>
+	</head>
+	<body>
+
+		<div id="map"></div>
+
+		<script>
+  			var map = L.map('map').setView([38.745, -9.152], 13);
+
+  			var planta1911 = L.esri.tiledMapLayer({
+				url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistoricaSilvaPinto1911/MapServer',
+				opacity: 1
+  			}).addTo(map);
+			
+			var satelite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczFvYWs5MDAyNDNjbHpiaGxycDRnZSJ9.TF7d4jL_9n2E9_N78gksGw', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				id: 'mapbox/satellite-v9',
+				tileSize: 512,
+				zoomOffset: -1
+			}).addTo(map);
+
+			var planta2022 = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczFvYWs5MDAyNDNjbHpiaGxycDRnZSJ9.TF7d4jL_9n2E9_N78gksGw', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				id: 'mapbox/light-v10',
+				tileSize: 512,
+				zoomOffset: -1
+			}).addTo(map);
+			
+			var baseLayers = {
+				'Vista de satélite': satelite,
+				'Lisboa em 2022': planta2022
+			};
+
+			var overlays = {
+				'Lisboa em 1911': planta1911
+			};
+			
+		 	var layerControl = L.control.layers(baseLayers, overlays, {
+				label: 'Camadas',
+				collapsed: false,
+			}).addTo(map);			
+
+			var opacityControl = L.control.opacity(overlays, {
+				label: 'Opacidade',
+				collapsed: false,
+			}).addTo(map);
+			
+			var scale = L.control.scale({
+				metric: true,
+				imperial: false,
+				maxWidth: 200,
+			}).addTo(map);
+			
+			// coordenadas via pop-up
+			var popup = L.popup();
+			function onMapClick(e) {
+    			popup
+        			.setLatLng(e.latlng)
+        			.setContent("You clicked the map at " + e.latlng.toString())
+        			.openOn(map);
+			}
+			map.on('click', onMapClick);
+			
+		</script>
+
+	</body>
+</html>

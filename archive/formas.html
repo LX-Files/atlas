@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>LISBOA (polígonos)</title>
+		<link rel="stylesheet" href="lx.css">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+	</head>
+
+	<body>
+		<div id="map" style="width: 100%; height: 100%;"></div>
+		<script>
+
+			var map = L.map('map').setView([38.745, -9.152], 13);
+
+			var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczFvYWs5MDAyNDNjbHpiaGxycDRnZSJ9.TF7d4jL_9n2E9_N78gksGw', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				id: 'mapbox/streets-v11',
+				tileSize: 512,
+				zoomOffset: -1
+			}).addTo(map);
+
+			// marcador em Londres
+			var marker = L.marker([38.738, -9.158]).addTo(map);
+			
+			// círculo em Londres
+			var circle = L.circle([38.753, -9.157], {
+    			color: 'red',
+    			fillColor: '#f03',
+    			fillOpacity: 0.5,
+    			radius: 500
+			}).addTo(map);
+			
+			// polígono em Londres
+			var polygon = L.polygon([
+    			[38.762, -9.147],
+    			[38.763, -9.140],
+    			[38.763, -9.136],
+				[38.765, -9.130],
+				[38.767, -9.129],
+				[38.768, -9.127],
+				[38.773, -9.128],
+				[38.773, -9.126],
+				[38.778, -9.127],
+				[38.781, -9.125],
+				[38.783, -9.125],
+				[38.784, -9.131],
+				[38.799, -9.125],
+				[38.799, -9.128],
+				[38.797, -9.134],
+				[38.792, -9.134],
+				[38.792, -9.135],
+				[38.790, -9.135],
+				[38.788, -9.136],
+				[38.788, -9.138],
+				[38.790, -9.139],
+				[38.787, -9.141],
+				[38.783, -9.138],
+				[38.781, -9.139],
+				[38.768, -9.147]
+			]).addTo(map);
+			
+			// pop-ups
+			marker.bindPopup("Praça de Espanha");
+			circle.bindPopup("Cidade Universitária");
+			polygon.bindPopup("Aeroporto<br>Humberto Delgado");
+			
+			// pop-up standalone
+			var popup = L.popup()
+    		.setLatLng([38.707, -9.136])
+    		.setContent("Praça do Comércio")
+    		.openOn(map);
+			
+			// coordenadas via alert box
+			// function onMapClick(e) {
+    		//  		alert("You clicked the map at " + e.latlng);
+			// }
+			// map.on('click', onMapClick);
+			
+			// coordenadas via pop-up
+			var popup = L.popup();
+			function onMapClick(e) {
+    			popup
+        			.setLatLng(e.latlng)
+        			.setContent("You clicked the map at " + e.latlng.toString())
+        			.openOn(map);
+			}
+			map.on('click', onMapClick);
+
+		</script>
+
+	</body>
+</html>

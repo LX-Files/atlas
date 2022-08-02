@@ -1,0 +1,680 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+	<head>
+ 		<title>Atlas Histórico</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=0.8, user-scalable=no" />
+		<!-- 
+		<!-- estilos genéricos e coisas afins -->
+		<link rel="stylesheet" href="css/lx.css">
+		<!-- 
+  		<!-- Load Leaflet from CDN -->
+		<!-- por uma questão de coerência, mais tarde fazer o load de uma versão mantida localmente -->
+  		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    		crossorigin=""/>
+  		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
+			crossorigin="">
+		</script>
+		<!-- 
+  		<!-- Load Esri Leaflet from CDN -->
+  		<script src="https://unpkg.com/esri-leaflet@3.0.7/dist/esri-leaflet.js"
+    		integrity="sha512-ciMHuVIB6ijbjTyEdmy1lfLtBwt0tEHZGhKVXDzW7v7hXOe+Fo3UA1zfydjCLZ0/vLacHkwSARXB5DmtNaoL/g=="
+    		crossorigin="">
+		</script>
+		<!-- 
+		<!-- escala com mais estilo -->
+		<!-- ajustei a fonte, para ficar apenas a preto -->
+		<!-- acabei por não utilizar por problemas no cálculo do valor da metade da escala -->
+		<!-- <link rel="stylesheet" href="plugin/betterScale/L.Control.BetterScale.css" />
+		<!-- <script src="plugin/betterScale/L.Control.BetterScale.js"></script>
+		<!--
+		<!-- para alternar entre basemaps -->
+		<link rel="stylesheet" href="plugin/switchBasemap/L.switchBasemap.css" />
+		<script src="plugin/switchBasemap/L.switchBasemap.js"></script>		
+		<!--
+		<!-- controlo de zoom melhorados -->
+		<!-- no TC, ou em qualquer servidor com HTTPS, o link seguinte tem que ter também HTTPS; no BATALHA não -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="plugin/ZoomHome/leaflet.zoomhome.css"/>
+		<script src="plugin/ZoomHome/leaflet.zoomhome.js"></script>
+		<!--
+		<!-- full screen -->
+		<link rel="stylesheet" href="plugin/FullScreen/Control.FullScreen.css" />
+ 		<script src="plugin/FullScreen/Control.FullScreen.js"></script>
+		<!-- 
+		<!-- indicação numérica da escala -->
+		<!-- o script só é referenciado no body, se for aqui aparentemente não funciona -->
+		<link rel="stylesheet" href="plugin/ScaleFactor/leaflet.scalefactor.css">
+		<!--
+		<!-- panel layers -->
+		<link rel="stylesheet" href="plugin/panel-layers/leaflet-panel-layers.css" />
+		<script src="plugin/panel-layers/leaflet-panel-layers.js"></script>		
+		<!-- <link rel="stylesheet" href="plugin/pLayers/icons.css" /> -->
+		<!-- <link rel="stylesheet" href="plugin/pLayers/style.css" /> -->
+		<!--
+		<!-- sliders de controlo de transparência -->
+		<link rel="stylesheet" href="plugin/ion.rangeSlider/css/ion.rangeSlider.css" />
+		<!-- 
+		<!-- Font Awesome -->
+		<link href="plugin/fontawesome/css/fontawesome.css" rel="stylesheet">
+  		<link href="plugin/fontawesome/css/solid.css" rel="stylesheet">
+		<!--
+		<!-- Leaflet.draw (acho que são bastantes coisas) -->
+    	<script src="plugin/Leaflet.draw/src/Leaflet.draw.js"></script>
+    	<script src="plugin/Leaflet.draw/src/Leaflet.Draw.Event.js"></script>
+    	<link rel="stylesheet" href="plugin/Leaflet.draw/src/leaflet.draw.css"/>
+
+    	<script src="plugin/Leaflet.draw/src/Toolbar.js"></script>
+    	<script src="plugin/Leaflet.draw/src/Tooltip.js"></script>
+
+    	<script src="plugin/Leaflet.draw/src/ext/GeometryUtil.js"></script>
+    	<script src="plugin/Leaflet.draw/src/ext/LatLngUtil.js"></script>
+    	<script src="plugin/Leaflet.draw/src/ext/LineUtil.Intersect.js"></script>
+    	<script src="plugin/Leaflet.draw/src/ext/Polygon.Intersect.js"></script>
+    	<script src="plugin/Leaflet.draw/src/ext/Polyline.Intersect.js"></script>
+    	<script src="plugin/Leaflet.draw/src/ext/TouchEvents.js"></script>
+
+    	<script src="plugin/Leaflet.draw/src/draw/DrawToolbar.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.Feature.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.SimpleShape.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.Polyline.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.Marker.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.Circle.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.CircleMarker.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.Polygon.js"></script>
+    	<script src="plugin/Leaflet.draw/src/draw/handler/Draw.Rectangle.js"></script>
+
+    	<script src="plugin/Leaflet.draw/src/edit/EditToolbar.js"></script>
+    	<script src="plugin/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
+    	<script src="plugin/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
+
+    	<script src="plugin/Leaflet.draw/src/Control.Draw.js"></script>
+
+    	<script src="plugin/Leaflet.draw/src/edit/handler/Edit.Poly.js"></script>
+    	<script src="plugin/Leaflet.draw/src/edit/handler/Edit.SimpleShape.js"></script>
+    	<script src="plugin/Leaflet.draw/src/edit/handler/Edit.Rectangle.js"></script>
+    	<script src="plugin/Leaflet.draw/src/edit/handler/Edit.Marker.js"></script>
+    	<script src="plugin/Leaflet.draw/src/edit/handler/Edit.CircleMarker.js"></script>
+    	<script src="plugin/Leaflet.draw/src/edit/handler/Edit.Circle.js"></script>
+		
+		<!-- print-master -->
+		<script src="plugin/print-master/dist/leaflet.browser.print.js"></script>
+  		<link href="plugin/print-master/dist/print-master.css" rel="stylesheet">
+		
+		<!-- graphicscale -->
+		<link rel="stylesheet" href="plugin/graphicscale/src/Leaflet.GraphicScale.css" />
+		
+  		<style>
+    		/* body { margin:0; padding:0; } */
+    		#map { position: absolute; top:0; bottom:0; right:0; left:0; }
+  		</style>
+
+	</head>
+
+	<body>
+		<div align="center"><span id="copy">Atlas Histórico</span></div>
+		<div id="map"></div>
+
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		
+		<!-- Indicador de escala no fundo da janela, do lado esquerdo -->
+		<!-- As duas linhas comentadas são do exemplo original, para debugging -->
+		<!-- Modifiquei a margem esquerda no CSS, de 5 para 10px, para ficar alinhada com a barra da escala -->
+		<!--
+		<!-- <script src="https://npmcdn.com/jquery@3.0.0/dist/jquery.min.js"></script> -->
+		<!-- <script src="https://rawgit.com/MarcChasse/leaflet.ScaleFactor/master/leaflet.scalefactor.min.js"></script> -->
+ 		<script src="plugin/ScaleFactor/leaflet.scalefactor.js"></script>
+
+		<!-- GEOJSON DATA -->
+		<script src="plugin/panel-layers/bar.js"></script>
+		<script src="plugin/panel-layers/drinking_water.js"></script>
+		<script src="arvores1.js" type="text/javascript"></script>
+		<script src="osm/testes.js" type="text/javascript"></script>
+
+		<!-- sliders de controlo de transparência -->
+		<script src="plugin/ion.rangeSlider/js/ion.rangeSlider.js"></script>	
+		
+		<!-- graphiscale -->
+		<script src="plugin/graphicscale/dist/Leaflet.GraphicScale.min.js"></script>
+
+		<!-- Estes elementos são nativos do Leaflet e definidos em leaflet.css -->
+		<!-- Se forem alterados aqui, sobrepõem-se à definição original -->
+		<!-- O valor default é 10px, que é o afastamento default dos controlos em relação à margem direita da janela -->
+		<!-- Aumentei a margem esquerda para 15 para permitir a barra de hover para o menu desdobrável sem colidir -->
+		<!-- com os botões; aumentei a margem do topo para 20 para dar espaço a um eventual título de mapa mais -->
+		<!-- comprido, que pode colidir com os botões mais de topo, sobretudo em janelas mais pequenos, ou écrãs -->
+		<!-- em formato portrait (telemóveis e afins) -->
+		<!-- Adicionar aqui outras alterações que sejam necessárias, para se sobreporem às nativas -->
+		<style>
+			.leaflet-left .leaflet-control {margin-left: 15px;}
+			.leaflet-top {margin-top: 20px;}
+		</style>
+
+		<!-- painéis laterais -->
+		<script>
+
+			var map = L.map('map', {
+				zoom: 13,
+				center: L.latLng([38.745, -9.152]),
+            	zoomControl: false,  // false desliga os controlos de zoom nativos do Leaflet
+				//attributionControl: false,
+				maxBounds: L.latLngBounds([[38.8033865,-9.251518],[38.694621,-9.07608]]).pad(0.5)
+			});
+			drawnItems = L.featureGroup().addTo(map);
+			
+			// rios, valas e canais
+			map.createPane('p520');
+			map.getPane('p520').style.zIndex = 520;
+			// leito de estradas
+			map.createPane('p530');
+			map.getPane('p530').style.zIndex = 530;
+			// pontes
+			map.createPane('p535');
+			map.getPane('p535').style.zIndex = 535;
+			// tunéis
+			map.createPane('p540');
+			map.getPane('p540').style.zIndex = 540;
+			// estradas, caminhos
+			map.createPane('p550');
+			map.getPane('p550').style.zIndex = 550;
+			
+			var zoomHome = L.Control.zoomHome();
+			zoomHome.addTo(map);
+			
+			// para começar com o basemap OpenStreetMap actualizado, usar estas linhas
+			//
+			//osmLayer = new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			//	maxZoom: 18,
+			//	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			//});
+			
+			// para começar com um basemap vazio (só terra e água, sem mais nada, usar estas linhas)
+			//
+			clearLayer = new L.tileLayer('https://api.mapbox.com/styles/v1/lx-files/cl20ok24z000b14piicvypnen/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczBudTF0MDJ4aDNibnJvMDlnMGJpayJ9.alfSnGj7PSaKyuwf4ObKXQ', {
+					maxZoom: 21,
+					attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' + 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+					id: 'landwater',
+					tileSize: 512,
+					zoomOffset: -1
+				});
+
+			map.addLayer(clearLayer);
+
+			// esta função permitirá adicionar a cada marcador que seja carregado,
+			// informação que aparecerá como popup, desde que para o marcador esteja
+			// definida a propriedade popupContent
+			//
+			function onEachFeature(feature, layer) {
+				var popupContent = '';
+				if (feature.properties && feature.properties.popupContent) {
+					popupContent += feature.properties.popupContent;
+				}
+				layer.bindPopup(popupContent);
+			}
+			
+			// coordenadas via pop-up
+			//
+			//var popup = L.popup();
+			//function onMapClick(e) {
+    		//	popup
+        	//		.setLatLng(e.latlng)
+        	//		.setContent("You clicked the map at " + e.latlng.toString())
+        	//		.openOn(map);
+			//}
+			//map.on('click', onMapClick);
+			
+			// aqui são definidos os 4 basemaps propostos
+			// adicionar mais caso seja necessário
+			//
+			new L.basemapsSwitcher([{
+				layer: L.tileLayer('https://api.mapbox.com/styles/v1/lx-files/cl20ok24z000b14piicvypnen/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczBudTF0MDJ4aDNibnJvMDlnMGJpayJ9.alfSnGj7PSaKyuwf4ObKXQ', {
+					maxZoom: 21,
+					attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' + 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+					id: 'landwater',
+					tileSize: 512,
+					zoomOffset: -1
+				}).addTo(map), 
+    			icon: 'plugin/switchBasemap/img4-1.PNG',
+    			name: 'Vazio'
+  			},{
+				layer: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    			}),
+    			icon: 'plugin/switchBasemap/img1-1.PNG',
+    			name: 'OSM'
+  			},{
+    			layer: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczBudTF0MDJ4aDNibnJvMDlnMGJpayJ9.alfSnGj7PSaKyuwf4ObKXQ', {
+					maxZoom: 21,
+					attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' + 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+					id: 'mapbox/satellite-v9',
+					tileSize: 512,
+					zoomOffset: -1
+				}),
+    			icon: 'plugin/switchBasemap/img2-1.PNG',
+    			name: 'Claro'
+  			},{
+    			layer: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczBudTF0MDJ4aDNibnJvMDlnMGJpayJ9.alfSnGj7PSaKyuwf4ObKXQ', {
+					maxZoom: 21,
+					attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' + 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+					id: 'mapbox/satellite-v9',
+					tileSize: 512,
+					zoomOffset: -1
+				}),
+    			icon: 'plugin/switchBasemap/img3-1.PNG',
+    			name: 'Satélite'
+  			}], { 
+				position: 'bottomright' 
+			}).addTo(map);			
+
+			// camadas de cartografia histórica com selector de opacidade
+			//
+			L.control.panelLayers(null, [{
+				group: "&nbsp;Cartografia histórica",
+				collapsed: true,
+				layers: [
+					{
+						active: false,
+						name: "1650 - Tinoco",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/web_tiles_t1/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1756 - Carlos Mardel",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistoricaCarlosMardel1756/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1780 - Planta Topographica de Lisboa",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistoricaTopografica1780/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1807 - Duarte Fava",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistoricaDuarteFava1807/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1844",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistorica1844/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1856/58 - Filipe Folque",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/web_tiles/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1871 - Calçadas e Canalizações CML",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistoricaCalcadasCML1871/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1878/79 - Francisco e César Goullard",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/Cartografia1878_FranciscoCesarGoullard/MapServer',
+							opacity: 1
+						})
+					},
+					{
+						active: false,
+						name: "1911 - Silva Pinto",
+						layer: L.esri.tiledMapLayer({
+							url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistoricaSilvaPinto1911/MapServer',
+							opacity: 1
+						})
+					}
+				]
+			}], {
+				position: 'topright',
+				compact: true,
+				collapsibleGroups: true,		
+				buildItem: function(item) {
+            		var $slider = $('<div class="layer-slider">');
+            		var $input = $('<input type="text" value="' + item.layer.options.opacity + '" />');
+            		$slider.append($input);
+						$input.ionRangeSlider({
+						skin: "sharp",
+						min: 0,
+						max: 1,
+						step: 0.01,
+                		hide_min_max: true,
+                		hide_from_to: true,
+                		from: item.layer.options.opacity,
+                		onChange: function(o) {
+                    		item.layer.setOpacity(o.from);
+							}
+            			});
+            		return $slider[0];
+    			}
+			}).addTo(map);			
+			
+			// camadas de cartografia temática
+			//
+			var baseLayers = [{}]; // porque não há basemaps a serem carregados por aqui, estão mais acima no basemapsSwitcher
+								   // acho que este valor também podia ser definido como null
+			var overLayers = [{
+				group: "&nbsp;Cartografia temática",
+				collapsed: true,
+				layers: [{
+					active: true,
+					name: "Árvores",
+					icon: '<i class="fa-solid fa-tree" style="font-size:smaller;color:green"></i>&nbsp;',
+					layer: L.geoJson(arvores,{
+						onEachFeature: onEachFeature,
+					})
+				},{
+					active: true,
+					name: "Ruas e estradas em 1911",
+					icon: '<i class="fa-solid fa-road" style="font-size:smaller;color:gray"></i>&nbsp;',
+					layer: L.geoJson(ruas,{
+						style: function (feature) {
+							//
+							// se a feature no ficheiro GeoJSON tiver definida uma propriedade style
+							// o que aí estiver definido é utilizado para a formatar; o return que se
+							// se segue devolve o conteúdo desse style; esta é a solução para aplicar
+							// vários estilos a um mesmo vector
+							//
+							return feature.properties && feature.properties.style;
+							//
+							// em alternativa, utilizar este switch quando estiver em causa apenas o conteúdo 
+							// da tag highway, ou de qualquer outra tag, para uma formatação mais simples
+							//
+							//switch (feature.properties.highway) {
+							//
+							// ou então, concatenar o conteúdo específico de tags, juntamente com a presença ou
+							// ausência de outras, levando a testar todas as combinações que as várias ocorrências
+							// formam
+							//
+							/*
+							var $ta = feature.properties.highway;
+							if (feature.properties.tunnel) {var $tb = feature.properties.tunnel} else {var $tb = 'no'};
+							if (feature.properties.bridge) {var $tc = feature.properties.tunnel} else {var $tc = 'no'};
+							var $tabc = $ta + '|' + $tb + '|' + $tc;
+							switch ($tabc) {
+								case 'unclassified|yes|no':
+									return {color: "#00ff00", weight: "2"};
+									break;
+            					case 'unclassified|no|no': 
+									return {color: "#999", weight: "2"};
+									break;
+								case 'track':
+									return {color: "#8f5514", weight: "2"};
+									break;
+								case 'steps':
+									return {color: "#ff6845", weight: "1", dashArray: '2,3'};
+									break;
+								case 'service':
+									return {color: "#ffffff", weight: "2"};
+									break;
+            					default: 
+									return {color: "#0000ff"};
+									break;
+							} */
+						},
+					})
+				},{
+					active: true,
+					name: "Streams",
+					layer: {
+						type: "tileLayer.wms",
+						args: ["https://siat.regione.umbria.it/arcgis/services/public/DBT_04_Idrografia/MapServer/WMSServer", {
+							layers: '6',
+							format: 'image/png',
+							transparent: true,
+						}]
+					}
+				}]
+			}];
+			var panelLayers = new L.Control.PanelLayers(baseLayers, overLayers, {
+				compact: true,
+				collapsed: false,
+				collapsibleGroups: true
+			});
+			map.addControl(panelLayers); 
+			
+			// botão para activar a vista de écrã inteiro
+			//
+			var full = L.control.fullscreen({
+  				position: 'topleft', // change the position of the button can be topleft, topright, bottomright or bottomleft, default topleft
+  				title: 'Vista de écrã inteiro', // change the title of the button, default Full Screen
+  				titleCancel: 'Sair da vista de écrã inteiro', // change the title of the button when fullscreen is on, default Exit Full Screen
+				content: null, // change the content of the button, can be HTML, default null
+  				forceSeparateButton: true, // force separate button to detach from zoom buttons, default false
+  				fullscreenElement: false // Dom element to render in full screen, false by default, fallback to map._container
+			}).addTo(map); 
+			
+			// barra de escala no fundo da janela
+			// utilizar L.control.betterscale, com as mesmas opções, para uma barra mais produzida; 
+			// infelizmente tem problemas no cálculo do valor da metade da barra
+			//
+			//var scale = L.control.scale({
+			//	metric: true,
+			//	imperial: true,
+			//	maxWidth: 100,
+			//}).addTo(map);
+			var graphicScale = L.control.graphicScale({
+				fill: 'fill',
+				showSubunits: false,
+				doubleLine: true,
+				labelPlacement: 'bottom'
+			}).addTo(map);
+			
+			// indicador de escala numérica
+			//
+			L.control.scalefactor().addTo(map); 
+			
+			// o bloco que se segue tenta determinar, de uma form básica é certo, mas testada e funcional,
+			// se o equipamento utilizado tem capacidade de touch; se assim for, o tamanho das handles de 
+			// desenho e edição de formas assume 20px de aresta, caso contrário fica apenas com 10px.
+			//
+			// este método de detecção foi testado em 2022-05-09 com um PC (Windows 10, sem touch),
+			// um telemóvel com Android 9 e um tablet com Android 7
+			//
+			var isMouse = true;
+			var msg = (window.matchMedia("(any-pointer: coarse)").matches ? "Touchscreen" : "Mouse");
+			if (msg == 'Mouse') {
+				var iSize = 10;
+			}
+			else {
+				var iSize = 20;
+			}
+			//
+			// para desactivar o menu do caixote do lixo da toolbar do plugin Leaflet.draw
+			// ao clicar no caixote do lixo, todas formas são apagadas
+			// estas linhas têm que aparecer antes de L.Control.Draw (a toolbar) ser adicionada ao mapa
+			//
+			//L.EditToolbar.Delete.include({
+  			//	enable: function () {
+    		//		this.options.featureGroup.clearLayers()
+  			//	}
+			//})
+			
+			// para adicionar a toolbar com os botões de desenho (Leaflet.draw)
+			// apenas ficam ligados o desenho de linhas e de polígonos
+			//
+     		var drawControl = new L.Control.Draw({
+         		edit: {
+             		featureGroup: drawnItems,
+            		poly: {
+                		allowIntersection: false,
+						icon: new L.DivIcon({
+							iconSize: new L.Point(iSize, iSize),
+							className: 'leaflet-div-icon leaflet-editing-icon leaflet-touch-icon'
+						})
+            		}
+       			},
+        		draw: {
+            		polygon: {
+                		allowIntersection: false,
+                		showArea: true,
+						icon: new L.DivIcon({
+							iconSize: new L.Point(iSize, iSize),
+							className: 'leaflet-div-icon leaflet-editing-icon'
+						})
+            		},
+					polyline: {
+						icon: new L.DivIcon({
+							iconSize: new L.Point(iSize, iSize),
+							className: 'leaflet-div-icon leaflet-editing-icon'
+						})
+					},
+					rectangle: false,
+					marker: false,
+					circle: false,
+					circlemarker: false
+        		}
+     		}).addTo(map);
+			
+			// truncatura de um valor com base na quantidade de casas decimais
+        	var _round = function(num, len) {
+            	return Math.round(num*(Math.pow(10, len)))/(Math.pow(10, len));
+        	};
+        	// formatação do objecto LatLng (x.xxxxxx, y.yyyyyy)
+        	var strLatLng = function(latlng) {
+            	return "("+_round(latlng.lat, 6)+", "+_round(latlng.lng, 6)+")";
+        	};
+
+        	// cria o conteúdo dos pop-ups, com base no tipo de camada (forma)
+        	// retorna uma string de HTML, ou null se for um objecto desconhecido
+        	var getPopupContent = function(layer) {
+            	// Marker - add lat/long
+            	if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+					return strLatLng(layer.getLatLng());
+            	// Circle - lat/long, radius
+            	} else if (layer instanceof L.Circle) {
+                	var center = layer.getLatLng(),
+						radius = layer.getRadius();
+                	return "Center: "+strLatLng(center)+"<br />"
+                      	+"Radius: "+_round(radius, 2)+" m";
+            	// Rectangle/Polygon - area
+            	} else if (layer instanceof L.Polygon) {
+                	var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
+                    	area = L.GeometryUtil.geodesicArea(latlngs);
+                	return "Area: "+L.GeometryUtil.readableArea(area, true);
+            	// Polyline - distance
+            	} else if (layer instanceof L.Polyline) {
+                	var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
+                    	distance = 0;
+                	if (latlngs.length < 2) {
+                    	return "Distance: N/A";
+                	} else {
+                    	for (var i = 0; i < latlngs.length-1; i++) {
+                       	 distance += latlngs[i].distanceTo(latlngs[i+1]);
+                    	}
+                    	return "Distance: "+_round(distance, 2)+" m";
+                	}
+            	}
+            	return null;			
+			};
+			
+			// para garantir que os elementos desenhados se mantêm no mapa
+			// depois de terminado o desenho e até serem eliminados ou até se
+			// sair da página; cria também uma camada para popups com informação
+			// sobre o elemento em que se clique
+			//
+			map.on(L.Draw.Event.CREATED, function (event) {
+        		var layer = event.layer;
+            	var content = getPopupContent(layer);
+				if (content !== null) {
+                	layer.bindPopup(content);
+            	}
+        		drawnItems.addLayer(layer);
+    		});
+			
+        	// para actualizar o conteúdo de popups quando um elemento desenhado
+			// for editado e modificado
+			//
+        	map.on(L.Draw.Event.EDITED, function(event) {
+            	var layers = event.layers,
+                	content = null;
+            	layers.eachLayer(function(layer) {
+                	content = getPopupContent(layer);
+                	if (content !== null) {
+                    	layer.setPopupContent(content);
+                	}
+            	});
+        	});
+			
+			// adiciona uma seta a indicar o Norte no canto inferior esquerdo do écrã
+			// L.control é a solução para adicionar blocos arbitrários de conteúdo HTML em zonas do mapa
+			//
+			var north = L.control({position: "bottomleft"});
+			north.onAdd = function(map) {
+    			var div = L.DomUtil.create("div", "info legend");
+    			div.innerHTML = '<div style="border: #777777 2px solid; background-color: rgba(255,255,255,0.6); padding: 2px"><img src="media/icons/north-20x27.png"></div>';
+    			return div;
+			}
+			north.addTo(map);
+
+			// para controlar a impressão
+			//
+    		L.control.browserPrint({
+        		closePopupsOnPrint: false,
+        		printModes: [
+            		L.BrowserPrint.Mode.Landscape(),
+            		"Portrait",
+            		L.BrowserPrint.Mode.Auto("B4",{title: "Auto"}),
+            		L.BrowserPrint.Mode.Custom("B5",{title:"Select area"})
+        		]
+    		}).addTo(map);
+			
+			map.on("browser-print-start", function(e){
+			//
+			// a linha seguinte permite adicionar a caixa com a escala numérica, embora por baixo da barra de escala;
+			// no entanto, limita-se a copiar o valor que estiver no écrã nesse momento; se a área de impressão
+			// for reduzida ou ampliada, esta escala numérica não é recalculada, logo é pouco relevante que apareça
+			//
+			// L.control.scalefactor().addTo(e.printMap); 
+            L.control.graphicScale({
+				fill: 'fill',
+				showSubunits: false,
+				doubleLine: true,
+				labelPlacement: 'bottom'
+            }).addTo(e.printMap);
+        });
+
+    		//L.BrowserPrint.Utils.registerLayer(L.TileLayer.WMS, 'L.TileLayer.WMS', function (layer) {
+        	//	console.info("Printing WMS layer.");
+        	//	return L.tileLayer.wms(layer._url, layer.options);
+    		//});
+
+		</script>
+		
+		<!-- menu lateral desdobrável -->
+		<!-- via Steven Waterman / Lexoral -->
+		<div style="padding-top: 22px">
+  			<nav>
+    			<a href="index.html">Início</a>
+    			<a href="interface.html">Interface</a>
+    			<a href="mapas-pt.html">Mapas de Portugal</a>
+    			<a href="mapas-regionais.html">Mapas Regionais</a>
+    			<a href="urbanos.html">Espaços Urbanos</a>
+    			<a href="outros.html">Outras Latitudes</a>
+  			</nav>
+		</div>
+		
+	</body>
+</html>

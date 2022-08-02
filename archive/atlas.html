@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<meta charset="utf-8" />
+  		<title>Atlas Histórico de Lisboa</title>
+  		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+		<!-- estilos genéricos e coisas afins -->
+		<link rel="stylesheet" href="lx.css">
+		
+  		<!-- Load Leaflet from CDN -->
+  		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    		crossorigin=""/>
+  		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
+			crossorigin="">
+		</script>
+
+  		<!-- Load Esri Leaflet from CDN -->
+  		<script src="https://unpkg.com/esri-leaflet@3.0.7/dist/esri-leaflet.js"
+    		integrity="sha512-ciMHuVIB6ijbjTyEdmy1lfLtBwt0tEHZGhKVXDzW7v7hXOe+Fo3UA1zfydjCLZ0/vLacHkwSARXB5DmtNaoL/g=="
+    		crossorigin="">
+		</script>
+		
+		<!-- opacity control -->
+		<script src="plugin/controlOpacity/dist/L.Control.Opacity.js"></script>
+        <link href="plugin/controlOpacity/dist/L.Control.Opacity.css" rel="stylesheet" />
+
+		<!-- escala com mais estilo -->
+		<!-- ajustei a fonte, para ficar apenas a preto -->
+		<link rel="stylesheet" href="plugin/betterScale/L.Control.BetterScale.css" />
+		<script src="plugin/betterScale/L.Control.BetterScale.js"></script>
+
+		<!-- para alternar entre basemaps -->
+		<link rel="stylesheet" href="plugin/switchBasemap/L.switchBasemap.css" />
+		<script src="plugin/switchBasemap/L.switchBasemap.js"></script>		
+		
+		<!-- controlo de zoom melhorados -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="plugin/ZoomHome/leaflet.zoomhome.css"/>
+		<script src="plugin/ZoomHome/leaflet.zoomhome.min.js"></script>
+		
+		<!-- full screen -->
+		<link rel="stylesheet" href="plugin/FullScreen/Control.FullScreen.css" />
+ 		<script src="plugin/FullScreen/Control.FullScreen.js"></script>
+
+		<!-- indicação numérica da escala -->
+		<link rel="stylesheet" href="plugin/ScaleFactor/leaflet.scalefactor.min.css">
+		
+		<!-- painéis laterais -->
+		<link rel="stylesheet" href="plugin/pLayers/leaflet-panel-layers.css" />
+		
+  		<style>
+    		/* body { margin:0; padding:0; } */
+    		#map { position: absolute; top:0; bottom:0; right:0; left:0; }
+  		</style>
+	</head>
+	<body>
+
+		<div id="copy">Atlas Histórico de Lisboa</div>
+		<div id="map"></div>
+
+		<!-- <script src="https://npmcdn.com/jquery@3.0.0/dist/jquery.min.js"></script> -->
+		<script src="plugin/ScaleFactor/leaflet.scalefactor.min.js"></script>
+		<script src="plugin/pLayers/leaflet-panel-layers.js"></script>
+
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		
+ 
+<!-- GEOJSON DATA  -->
+
+	<script src="plugin/pLayers/bar.js"></script>
+<script src="plugin/pLayers/drinking_water.js"></script>
+<script>
+
+			var map = L.map('map',{
+				minZoom: 8,
+                maxZoom: 18,
+                zoomControl: false  // false desliga os controlos de zoom nativos do Leaflet
+            }).setView([38.745, -9.152], 12);
+
+			var zoomHome = L.Control.zoomHome();
+			zoomHome.addTo(map);
+			
+			osm = new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			});
+
+			map.addLayer(osm);
+ 			// coordenadas via pop-up
+			var popup = L.popup();
+			function onMapClick(e) {
+    			popup
+        			.setLatLng(e.latlng)
+        			.setContent("You clicked the map at " + e.latlng.toString())
+        			.openOn(map);
+			}
+			map.on('click', onMapClick);
+
+  			// var planta1911 = L.esri.tiledMapLayer({
+			//	url: 'https://tiles.arcgis.com/tiles/1dSrzEWVQn5kHHyK/arcgis/rest/services/CartografiaHistoricaSilvaPinto1911/MapServer',
+			//	opacity: 1
+  			//}).addTo(map);
+			
+			// var satelite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczBudTF0MDJ4aDNibnJvMDlnMGJpayJ9.alfSnGj7PSaKyuwf4ObKXQ', {
+			//	maxZoom: 18,
+			//	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			//	'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			//	id: 'mapbox/satellite-v9',
+			//	tileSize: 512,
+			//	zoomOffset: -1
+			//}).addTo(map);
+
+			//var planta2022 = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczBudTF0MDJ4aDNibnJvMDlnMGJpayJ9.alfSnGj7PSaKyuwf4ObKXQ', {
+			//	maxZoom: 18,
+			//	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			//	'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			//	id: 'mapbox/light-v10',
+			//	tileSize: 512,
+			//	zoomOffset: -1
+			//}).addTo(map);
+
+/* AQUI			
+			new L.basemapsSwitcher([
+				{
+					layer: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    				}).addTo(map), //DEFAULT MAP
+    				icon: 'plugin/switchBasemap/img1.PNG',
+    				name: 'OSM'
+  				},
+  				{
+    				layer: L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',{
+      					attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+    				}),
+    				icon: 'plugin/switchBasemap/img2.PNG',
+    				name: 'Light'
+  				},
+  				{
+    				layer: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibHgtZmlsZXMiLCJhIjoiY2wwczBudTF0MDJ4aDNibnJvMDlnMGJpayJ9.alfSnGj7PSaKyuwf4ObKXQ', {
+						maxZoom: 18,
+						attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' + 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+						id: 'mapbox/satellite-v9',
+						tileSize: 512,
+						zoomOffset: -1
+					}),
+    				icon: 'plugin/switchBasemap/img3.PNG',
+    				name: 'Satélite'
+  				},
+			], { position: 'bottomright' }).addTo(map);			
+
+			
+			/* var baseLayers = {
+				'Vista de satélite': satelite,
+				'Lisboa em 2022': planta2022
+			};
+
+			var overlays = {
+				'Lisboa em 1911': planta1911
+			};
+			
+			var layerControl = L.control.layers(baseLayers, overlays, {
+				label: 'Camadas',
+				collapsed: false,
+			}).addTo(map);			
+
+			var opacityControl = L.control.opacity(overlays, {
+				label: 'Opacidade',
+				collapsed: false,
+			}).addTo(map); */
+			
+/*	AQUI		var full = L.control.fullscreen({
+  				position: 'topleft', // change the position of the button can be topleft, topright, bottomright or bottomleft, default topleft
+  				title: 'Vista de écrã inteiro', // change the title of the button, default Full Screen
+  				titleCancel: 'Sair da vista de écrã inteiro', // change the title of the button when fullscreen is on, default Exit Full Screen
+				content: null, // change the content of the button, can be HTML, default null
+  				forceSeparateButton: true, // force separate button to detach from zoom buttons, default false
+  				fullscreenElement: false // Dom element to render in full screen, false by default, fallback to map._container
+			}).addTo(map);
+			
+			var scale = L.control.betterscale({
+				metric: true,
+				imperial: false,
+				maxWidth: 200,
+			}).addTo(map);
+			L.control.scalefactor().addTo(map); */
+			 
+var baseLayers = [
+	{
+		name: "Open Street Map",
+		layer: osmLayer
+	},
+	{
+		name: "Hiking",
+		layer: L.tileLayer("https://toolserver.org/tiles/hikebike/{z}/{x}/{y}.png")
+	},
+	{
+		name: "Aerial",
+		layer: L.tileLayer('https://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+			type: 'sat',
+			ext: 'jpg',
+			attribution: 'Tiles Courtesy of <a href="https://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
+			subdomains: '1234'
+		})
+	},
+	{
+		group: "Road Layers",
+		collapsed: true,
+		layers: [
+			{
+				name: "Open Cycle Map",
+				layer: L.tileLayer('https://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png')
+			},
+			{
+				name: "Transports",
+				layer: L.tileLayer('https://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png')
+			}
+		]
+	}
+];
+
+var overLayers = [
+	{
+		group: "GeoJSON Layers",
+		layers: [
+			{
+				active: true,
+				name: "Drinking Water",
+				icon: '<i class="icon icon-drinking_water"></i>',
+				layer: L.geoJson(Drinking_water)
+			},
+			{
+				active: true,
+				name: "River",
+				layer: (function() {
+					var l = L.geoJson();
+					$.getJSON('data/river.json', function(j) {
+						l.addData(j);
+					});
+					return l;
+				}())
+			},
+		]
+	},
+	{
+		group: "WMS Layers",
+		layers: [
+			{
+				active: true,
+				name: "Isolines",
+				layer: {
+					type: "tileLayer.wms",
+					args: ["https://siat.regione.umbria.it/arcgis/services/public/DBT_05_Orografia/MapServer/WMSServer", {
+							layers: '13',
+							format: 'image/png',
+							transparent: true,
+							//minZoom: 13
+						}
+					]
+				}
+			},
+			{
+				active: true,
+				name: "Streams",
+				layer: {
+					type: "tileLayer.wms",
+					args: ["https://siat.regione.umbria.it/arcgis/services/public/DBT_04_Idrografia/MapServer/WMSServer", {
+							layers: '6',
+							format: 'image/png',
+							transparent: true,
+						}
+					]
+				}
+			}
+		]
+	}
+];
+
+var panelLayers = new L.Control.PanelLayers(baseLayers, overLayers, {
+	// compact: true,
+	// collapsed: true,
+	collapsibleGroups: true
+});
+
+map.addControl(panelLayers); 
+
+		</script>
+	</body>
+</html>
